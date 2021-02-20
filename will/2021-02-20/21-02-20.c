@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "../stb_image_write.h"
+#include "../libs/stb_image_write.h"
 
 #define RAND_MAX 255
 
