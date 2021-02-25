@@ -102,3 +102,17 @@ struct Color generate_random_color(bool alpha)
 
     return color;
 }
+
+struct Color add_color(struct Color c1, struct Color c2)
+{
+    struct Color value;
+    unsigned char rvalue = c1.r + c2.r;
+    unsigned char gvalue = c1.g + c2.g;
+    unsigned char bvalue = c1.b + c2.b;
+
+    value.r = rvalue < c1.r ? 255 : rvalue;
+    value.g = gvalue < c1.g ? 255 : gvalue;
+    value.b = bvalue < c1.b ? 255 : bvalue;
+    value.a = c1.a;
+    return value;
+}
