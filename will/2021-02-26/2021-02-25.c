@@ -31,6 +31,17 @@ void main()
 
     set_background(&buffer, (struct Color){0,0,0,255});
     write_buffer_from_colored_lines(&buffer, positions, linenum);
+    struct Buffer new_buffer = copy_buffer(&buffer);
+    for (int i = 5; i < buffer.size.x - 5; i++)
+    {
+        for (int j = 5; j < buffer.size.y - 5; j++)
+        {
+            buffer.colors[i+j*buffer.size.x].r = new_buffer.colors[i + rand()%3 +j*buffer.size.x].r;
+            buffer.colors[i+j*buffer.size.x].g = new_buffer.colors[i - rand()%3 +j*buffer.size.x].g;
+            buffer.colors[i+j*buffer.size.x].b = new_buffer.colors[i +( j - rand()%3)*buffer.size.x].b;
+        }
+    }
+
 
     unsigned char* data = pixel_values_to_uchar(&buffer);
     stbi_write_png("2021-02-21.png", WIDTH, HEIGHT, 4, data, WIDTH * 4);
