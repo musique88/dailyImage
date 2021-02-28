@@ -27,6 +27,11 @@ int line_y(struct Line line, int x, float slope)
     return line.position_a.y + slope * (x - line.position_a.x);
 }
 
+int line_x(struct Line line, int y, float slope)
+{
+    return line.position_a.x + (1.f/slope) * (y - line.position_a.y);
+}
+
 struct ColoredLine{struct Line l; struct Color c; };
 
 struct Buffer render_colored_line(struct ColoredLine coloredline)
@@ -63,24 +68,71 @@ void write_buffer_from_colored_lines(struct Buffer *buffer, struct ColoredLine* 
     for (int k = 0; k < linenum; k++)
     {
         struct ColoredLine *line = &coloredLines[k];
-
-        if(line->l.position_b.x < line->l.position_a.x)
-        {
-            struct Vector2f value = line->l.position_a;
-            line->l.position_a = line->l.position_b;
-            line->l.position_b = value; 
-        }
         float slope = get_slope(line->l);
-        int last_y = line->l.position_a.y;
-        for (int i = line->l.position_a.x; i < line->l.position_b.x; ++i)
+        if (fabs(slope) < 1)
         {
-            int current_y = line_y(line->l, i, slope);
-            buffer->colors[i + current_y * buffer->size.x] = blend_color(buffer->colors[i + current_y * buffer->size.x], line->c, NORMAL);
-            int slope_sign = slope < 0 ? -1 : 1;
-            for (int j = 1; j < abs(current_y - last_y); j++)
-                buffer->colors[i - 1 + (current_y - (j * slope_sign)) * buffer->size.x] = 
-                    blend_color(buffer->colors[i - 1 + (current_y - (j * slope_sign)) * buffer->size.x], line->c, NORMAL);
-            last_y = current_y;
+            if(line->l.position_b.x < line->l.position_a.x)
+            {
+                struct Vector2f value = line->l.position_a;
+                line->l.position_a = line->l.position_b;
+                line->l.position_b = value; 
+            }
+            for (int i = line->l.position_a.x; i < line->l.position_b.x; ++i)
+            {
+                int current_y = line_y(line->l, i, slope);
+                buffer->colors[i + current_y * buffer->size.x] = blend_color(buffer->colors[i + current_y * buffer->size.x], line->c, NORMAL);
+            }
+        }
+        else
+        {
+            if(line->l.position_b.y < line->l.position_a.y)
+            {
+                struct Vector2f value = line->l.position_a;
+                line->l.position_a = line->l.position_b;
+                line->l.position_b = value; 
+            }
+            for (int i = line->l.position_a.y; i < line->l.position_b.y; ++i)
+            {
+                int current_x = line_x(line->l, i, slope);
+                buffer->colors[current_x + i * buffer->size.x] = blend_color(buffer->colors[current_x + i * buffer->size.x], line->c, NORMAL);
+            }
+        }
+    }
+}
+
+void write_buffer_from_lines(struct Buffer *buffer, struct Line* lines, int linenum, struct Color color)
+{
+    for (int k = 0; k < linenum; k++)
+    {
+        struct Line *line = &lines[k];
+        float slope = get_slope(*line);
+        if (fabs(slope) < 1)
+        {
+            if(line->position_b.x < line->position_a.x)
+            {
+                struct Vector2f value = line->position_a;
+                line->position_a = line->position_b;
+                line->position_b = value; 
+            }
+            for (int i = line->position_a.x; i < line->position_b.x; ++i)
+            {
+                int current_y = line_y(*line, i, slope);
+                buffer->colors[i + current_y * buffer->size.x] = blend_color(buffer->colors[i + current_y * buffer->size.x], color, NORMAL);
+            }
+        }
+        else
+        {
+            if(line->position_b.y < line->position_a.y)
+            {
+                struct Vector2f value = line->position_a;
+                line->position_a = line->position_b;
+                line->position_b = value; 
+            }
+            for (int i = line->position_a.y; i < line->position_b.y; ++i)
+            {
+                int current_x = line_x(*line, i, slope);
+                buffer->colors[current_x + i * buffer->size.x] = blend_color(buffer->colors[current_x + i * buffer->size.x], color, NORMAL);
+            }
         }
     }
 }
