@@ -80,7 +80,11 @@ void write_buffer_from_colored_lines(struct Buffer *buffer, struct ColoredLine* 
             for (int i = line->l.position_a.x; i < line->l.position_b.x; ++i)
             {
                 int current_y = line_y(line->l, i, slope);
-                buffer->colors[i + current_y * buffer->size.x] = blend_color(buffer->colors[i + current_y * buffer->size.x], line->c, NORMAL);
+                if (i + current_y * buffer->size.x < buffer->size.x * buffer->size.y &&
+                    i + current_y * buffer->size.x > 0)
+                    buffer->colors[i + current_y * buffer->size.x] = blend_color(buffer->colors[i + current_y * buffer->size.x], line->c, NORMAL);
+                // else
+                //     printf("Position[%d,%d], from line: %d cannot be drawn\n", i, current_y,k);
             }
         }
         else
@@ -94,7 +98,11 @@ void write_buffer_from_colored_lines(struct Buffer *buffer, struct ColoredLine* 
             for (int i = line->l.position_a.y; i < line->l.position_b.y; ++i)
             {
                 int current_x = line_x(line->l, i, slope);
-                buffer->colors[current_x + i * buffer->size.x] = blend_color(buffer->colors[current_x + i * buffer->size.x], line->c, NORMAL);
+                if (current_x + i * buffer->size.x < buffer->size.x * buffer->size.y &&
+                    current_x + i * buffer->size.x > 0)
+                    buffer->colors[current_x + i * buffer->size.x] = blend_color(buffer->colors[current_x + i * buffer->size.x], line->c, NORMAL);
+                // else
+                //     printf("Position[%d,%d], from line: %d cannot be drawn\n", current_x, i,k);
             }
         }
     }
@@ -134,5 +142,18 @@ void write_buffer_from_lines(struct Buffer *buffer, struct Line* lines, int line
                 buffer->colors[current_x + i * buffer->size.x] = blend_color(buffer->colors[current_x + i * buffer->size.x], color, NORMAL);
             }
         }
+    }
+}
+
+void write_buffer_from_pixels(struct Buffer *buffer, struct Vector2f* pixels, int pixelcount, struct Color color)
+{
+    for (int k = 0; k < pixelcount; k++)
+    {
+        if (
+            (int)pixels[k].x + (int)pixels[k].y * buffer->size.x < buffer->size.x * buffer->size.y &&
+            (int)pixels[k].x + (int)pixels[k].y * buffer->size.x > 0)
+            buffer->colors[(int)pixels[k].x + (int)pixels[k].y * buffer->size.x] = color;
+        else
+            printf("Position[%d,%d], index: %d cannot be drawn\n", (int)pixels[k].x, (int)pixels[k].y,k);
     }
 }
