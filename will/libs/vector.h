@@ -148,3 +148,8 @@ struct Color blend_color(struct Color c1, struct Color c2, enum BLENDING_METHOD 
 
     return value;
 }
+
+struct Vector2f v2f_negate(struct Vector2f v)
+{
+    return (struct Vector2f){-v.x, -v.y};
+}

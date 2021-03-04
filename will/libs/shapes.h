@@ -17,6 +17,12 @@ struct Line{
     struct Vector2f position_b;
 };
 
+struct Triangle{
+    struct Vector2f position_a;
+    struct Vector2f position_b;
+    struct Vector2f position_c;
+};
+
 float get_slope(struct Line line)
 {
     if (line.position_b.x - line.position_a.x)
@@ -35,6 +41,7 @@ int line_x(struct Line line, int y, float slope)
 }
 
 struct ColoredLine{struct Line l; struct Color c; };
+struct ColoredCircle{struct Circle ci; struct Color co;};
 
 struct Buffer render_colored_line(struct ColoredLine coloredline)
 {
@@ -158,4 +165,73 @@ void write_buffer_from_pixels(struct Buffer *buffer, struct Vector2f* pixels, in
         else
             printf("Position[%d,%d], index: %d cannot be drawn\n", (int)pixels[k].x, (int)pixels[k].y,k);
     }
+}
+
+void write_buffer_from_triangle(struct Buffer *buffer, struct Triangle triangle, struct Color color)
+{
+    int length = v2f_get_length(triangle.position_a, triangle.position_b);
+    struct Line line = {triangle.position_a, triangle.position_b};
+    float slope = get_slope(line);
+    struct Line lines[length];
+    if (fabs(slope) < 1)
+    {
+        if(line.position_b.x < line.position_a.x)
+        {
+            struct Vector2f value = line.position_a;
+            line.position_a = line.position_b;
+            line.position_b = value; 
+        }
+        for (int i = line.position_a.x; i < line.position_b.x; ++i)
+        {
+            int current_y = line_y(line, i, slope);
+            lines[i - (int)line.position_a.x] = (struct Line){(struct Vector2f){i, current_y}, triangle.position_c};
+        }
+    }
+    else
+    {
+        if(line.position_b.y < line.position_a.y)
+        {
+            struct Vector2f value = line.position_a;
+            line.position_a = line.position_b;
+            line.position_b = value; 
+        }
+        for (int i = line.position_a.y; i < line.position_b.y; ++i)
+        {
+            int current_x = line_x(line, i, slope);            
+            lines[i - (int)line.position_a.y] = (struct Line){(struct Vector2f){current_x, i}, triangle.position_c};
+        }
+    }
+    write_buffer_from_lines(buffer, lines, length, color);
+}
+
+void write_buffer_from_circle(struct Buffer *buffer, struct Circle circle, struct Color color)
+{
+    for (int i = 0; i < buffer->size.x; i++)
+    {
+        for (int j = 0; j < buffer->size.y; j++)
+        {
+            if (v2f_get_length(circle.position, (struct Vector2f) {i,j}) < circle.radius)
+            {
+                buffer->colors[i+j*buffer->size.x] = color; 
+            }
+        }
+    }
+}
+
+void write_buffer_from_circles(struct Buffer *buffer, struct Circle *circle, int length)
+{
+    for (int k = 0; k < length; k++)
+        for (int i = 0; i < buffer->size.x; i++)
+            for (int j = 0; j < buffer->size.y; j++)
+                if (v2f_get_length(circle[k].position, (struct Vector2f) {i,j}) < circle[k].radius)
+                    buffer->colors[i+j*buffer->size.x] = generate_random_color(false); 
+}
+
+void write_buffer_from_colored_circles(struct Buffer *buffer, struct ColoredCircle *circle, int length)
+{
+    for (int k = 0; k < length; k++)
+        for (int i = 0; i < buffer->size.x; i++)
+            for (int j = 0; j < buffer->size.y; j++)
+                if (v2f_get_length(circle[k].ci.position, (struct Vector2f) {i,j}) < circle[k].ci.radius)
+                    buffer->colors[i+j*buffer->size.x] = circle[k].co; 
 }
