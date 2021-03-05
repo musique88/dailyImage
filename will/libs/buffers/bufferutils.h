@@ -3,6 +3,59 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+struct Buffer* create_empty_buffer(struct Vector2i size) 
+{
+    struct Color* colors = malloc(sizeof(struct Color) * size.x * size.y);
+    struct Buffer* buffer = malloc(sizeof(struct Buffer));
+    buffer->size = size;
+    buffer->colors = colors;
+    for (int i = 0; i < size.x; i++)
+        for (int j = 0; j < size.y; j++)
+            buffer->colors[i + j*size.x] = (struct Color){0,0,0,0};
+    return buffer;
+}
+
+void stack_buffer(struct Buffer *buffer, struct PositionedBuffer *buffer2)
+{
+    for (int i = 0; i < buffer2->buffer->size.x; i++)
+    {
+        for (int j = 0; j < buffer2->buffer->size.y; j++)
+        {
+            struct Vector2i position = {i + buffer2->position.x, j + buffer2->position.y};
+            if (position.x < buffer->size.x && position.y < buffer->size.y)
+                buffer->colors[position.x + position.y * buffer->size.x] = buffer2->buffer->colors[i + j * buffer2->buffer->size.x];
+        }
+    }
+}
+
+void stack_buffer_w_loop(struct Buffer *buffer, struct PositionedBuffer *buffer2)
+{
+    for (int i = 0; i < buffer2->buffer->size.x; i++)
+    {
+        for (int j = 0; j < buffer2->buffer->size.y; j++)
+        {
+            struct Vector2i position = {i + buffer2->position.x, j + buffer2->position.y};
+            buffer->colors[position.x%(buffer->size.x) + position.y%(buffer->size.y) * buffer->size.x] = buffer2->buffer->colors[i + j * buffer2->buffer->size.x];
+        }
+    }
+}
+
+void stack_buffer_w_enlarge(struct Buffer *buffer, struct PositionedBuffer *buffer2)
+{
+    // TODO
+    if (buffer2->position.x + buffer2->buffer->size.x < buffer->size.x &&
+        buffer2->position.y + buffer2->buffer->size.y < buffer->size.y)
+    for (int i = 0; i < buffer2->buffer->size.x; i++)
+    {
+        for (int j = 0; j < buffer2->buffer->size.y; j++)
+        {
+            struct Vector2i position = {i + buffer2->position.x, j + buffer2->position.y};
+            if (position.x < buffer->size.x && position.y < buffer->size.y)
+                buffer->colors[position.x + position.y * buffer->size.x] = buffer2->buffer->colors[i + j * buffer2->buffer->size.x];
+        }
+    }
+}
+
 void set_background(struct Buffer *buffer, struct Color color)
 {
     for (int j = 0; j < buffer->size.y; ++j)
