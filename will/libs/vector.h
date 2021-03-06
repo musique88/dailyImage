@@ -89,6 +89,15 @@ struct Color{
     unsigned char a;
 };
 
+int color_is_the_same(struct Color a, struct Color b)
+{
+    return 
+        a.a==b.a &&
+        a.r==b.r &&
+        a.g==b.g &&
+        a.b==b.b;
+}
+
 struct Color generate_random_color(bool alpha)
 {
     unsigned char alpha_value = 255;

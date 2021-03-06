@@ -35,7 +35,8 @@ void stack_buffer_w_loop(struct Buffer *buffer, struct PositionedBuffer *buffer2
         for (int j = 0; j < buffer2->buffer->size.y; j++)
         {
             struct Vector2i position = {i + buffer2->position.x, j + buffer2->position.y};
-            buffer->colors[position.x%(buffer->size.x) + position.y%(buffer->size.y) * buffer->size.x] = buffer2->buffer->colors[i + j * buffer2->buffer->size.x];
+            if (!color_is_the_same(buffer2->buffer->colors[i + j * buffer2->buffer->size.x], (struct Color){0,0,0,0}))
+                buffer->colors[position.x%(buffer->size.x) + position.y%(buffer->size.y) * buffer->size.x] = buffer2->buffer->colors[i + j * buffer2->buffer->size.x];
         }
     }
 }
