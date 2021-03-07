@@ -41,6 +41,12 @@ void stack_buffer_w_loop(struct Buffer *buffer, struct PositionedBuffer *buffer2
     }
 }
 
+void stack_buffers_w_loop(struct Buffer *buffer, struct PositionedBuffer *buffer_array, int array_length)
+{
+    for (int k = 0; k < array_length; k++)
+        stack_buffer_w_loop(buffer, &buffer_array[k]);
+}
+
 void stack_buffer_w_enlarge(struct Buffer *buffer, struct PositionedBuffer *buffer2)
 {
     // TODO
