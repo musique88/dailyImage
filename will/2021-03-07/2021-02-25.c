@@ -16,7 +16,7 @@ void main()
     struct Buffer* buffer = create_empty_buffer((struct Vector2i){WIDTH, HEIGHT});
     srand(time(NULL));
     int max_value = 20;
-    int arr_length = 20000;
+    int arr_length = 200;
     struct Buffer* rendered_lines[arr_length];
     struct PositionedBuffer positioned_rendered_lines[arr_length];
 
