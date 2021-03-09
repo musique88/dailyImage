@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+  </head>
+  <body>
+    <canvas id="canvas" width="256" height="256">
+    </canvas>
+    <div class="setting">
+      <span>Vf</span>
+      <input type="number" value="1" data-vector="f" data-index="0">
+      <input type="number" value="1" data-vector="f" data-index="1">
+      <input type="number" value="1" data-vector="f" data-index="2">
+    </div>
+    <div class="setting">
+      <span>Vx</span>
+      <input type="number" value="1" data-vector="x" data-index="0">
+      <input type="number" value="1" data-vector="x" data-index="1">
+      <input type="number" value="1" data-vector="x" data-index="2">
+    </div>
+    <div class="setting">
+      <span>Vy</span>
+      <input type="number" value="1" data-vector="y" data-index="0">
+      <input type="number" value="1" data-vector="y" data-index="1">
+      <input type="number" value="1" data-vector="y" data-index="2">
+    </div>
+  </body>
+  <script src="meme.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      background: -moz-element(#canvas);
+      background-repeat: repeat;
+    }
+
+    .setting {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      background: white;
+    }
+
+    #canvas {
+      visibility: hidden;
+    }
+  </style>
+</html>
