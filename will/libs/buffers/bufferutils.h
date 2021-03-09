@@ -28,7 +28,7 @@ void stack_buffer(struct Buffer *buffer, struct PositionedBuffer *buffer2)
     }
 }
 
-void stack_buffer_w_loop(struct Buffer *buffer, struct PositionedBuffer *buffer2)
+void stack_buffer_w_loop(struct Buffer *buffer, struct PositionedBuffer *buffer2, int blend_method)
 {
     for (int i = 0; i < buffer2->buffer->size.x; i++)
     {
@@ -36,7 +36,8 @@ void stack_buffer_w_loop(struct Buffer *buffer, struct PositionedBuffer *buffer2
         {
             struct Vector2i position = {i + buffer2->position.x, j + buffer2->position.y};
             if (!color_is_the_same(buffer2->buffer->colors[i + j * buffer2->buffer->size.x], (struct Color){0,0,0,0}))
-                buffer->colors[position.x%(buffer->size.x) + position.y%(buffer->size.y) * buffer->size.x] = buffer2->buffer->colors[i + j * buffer2->buffer->size.x];
+                buffer->colors[position.x%(buffer->size.x) + position.y%(buffer->size.y) * buffer->size.x] = 
+                blend_color(buffer2->buffer->colors[i + j * buffer2->buffer->size.x], buffer->colors[position.x%(buffer->size.x) + position.y%(buffer->size.y) * buffer->size.x], blend_method);
         }
     }
 }
@@ -44,7 +45,7 @@ void stack_buffer_w_loop(struct Buffer *buffer, struct PositionedBuffer *buffer2
 void stack_buffers_w_loop(struct Buffer *buffer, struct PositionedBuffer *buffer_array, int array_length)
 {
     for (int k = 0; k < array_length; k++)
-        stack_buffer_w_loop(buffer, &buffer_array[k]);
+        stack_buffer_w_loop(buffer, &buffer_array[k], ADD_UNCAPPED);
 }
 
 void stack_buffer_w_enlarge(struct Buffer *buffer, struct PositionedBuffer *buffer2)
