@@ -14,7 +14,7 @@ float get_slope(struct Line line)
 {
     if (line.position_b.x - line.position_a.x)
         return (line.position_b.y - line.position_a.y)/(line.position_b.x - line.position_a.x);
-    return 0;
+    return (float)((unsigned int)0 - 1);
 }
 
 int line_y(struct Line line, int x, float slope)
