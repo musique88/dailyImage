@@ -36,7 +36,7 @@ void main()
     {
         for (int j = 0; j < HEIGHT; j++)
         {
-            int value = i%WIDTH + (((j + (int)floor(((i - 1000)*(i - 1000)*(j + 1))/10.f))%HEIGHT) * WIDTH);
+            int value = i%WIDTH + (((j + abs((int)floor(((i/2.f - 2000)*(i - 2000)*(j + 2000))/1500.f)))%HEIGHT) * WIDTH);
             buffer2->colors[i + j * WIDTH] = buffer->colors[value];
         }
     }
